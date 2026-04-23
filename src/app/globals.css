@@ -1,0 +1,277 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-sans);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+  /* Subtle off-white background for depth */
+  --background: oklch(0.988 0.004 95);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.972 0.004 95);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.968 0.004 95);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.962 0.006 95);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  /* Slightly stronger borders for crispness */
+  --border: oklch(0.892 0.006 95);
+  --input: oklch(0.892 0.006 95);
+  --ring: oklch(0.77 0.01 95);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --radius: 0.875rem;
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0.004 95);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0.004 95);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.257 0.004 95);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.252 0.004 95);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.285 0.004 95);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 11%);
+  --input: oklch(1 0 0 / 16%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    @apply font-sans overflow-x-clip;
+    /** 避免 Radix 弹层锁滚动条时 viewport 变宽导致整页左移 */
+    scrollbar-gutter: stable;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    text-rendering: geometricPrecision;
+    -webkit-tap-highlight-color: transparent;
+    background-image:
+      radial-gradient(circle at top, color-mix(in oklab, var(--primary) 5%, transparent), transparent 28%),
+      linear-gradient(to bottom, color-mix(in oklab, var(--background) 96%, white), var(--background));
+  }
+
+  button,
+  a,
+  input,
+  textarea,
+  select {
+    @apply transition-[color,background-color,border-color,box-shadow,transform,opacity];
+  }
+
+  input:not([type='checkbox']):not([type='radio']):not([type='range']),
+  textarea,
+  select {
+    box-shadow: inset 0 1px 0 color-mix(in oklab, var(--background) 84%, white);
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--primary) 18%, transparent);
+  }
+}
+
+/* Mobile-first polish: more breathable spacing & larger tap targets (no logic changes) */
+@layer utilities {
+  /** 与刘海屏 / 横条安全区对齐，避免贴边误触 */
+  .px-safe {
+    padding-left: max(1rem, env(safe-area-inset-left, 0px));
+    padding-right: max(1rem, env(safe-area-inset-right, 0px));
+  }
+
+  .page-shell {
+    margin-inline: auto;
+    width: 100%;
+    max-width: 72rem;
+    padding-left: max(1rem, env(safe-area-inset-left, 0px));
+    padding-right: max(1rem, env(safe-area-inset-right, 0px));
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+  }
+
+  .page-shell-tight {
+    margin-inline: auto;
+    width: 100%;
+    max-width: 64rem;
+    padding-left: max(1rem, env(safe-area-inset-left, 0px));
+    padding-right: max(1rem, env(safe-area-inset-right, 0px));
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+  }
+
+  .page-shell-narrow {
+    margin-inline: auto;
+    width: 100%;
+    max-width: 48rem;
+    padding-left: max(1rem, env(safe-area-inset-left, 0px));
+    padding-right: max(1rem, env(safe-area-inset-right, 0px));
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+  }
+
+  .panel-card {
+    @apply rounded-[calc(var(--radius)*1.15)] border border-border/80 bg-card/95 shadow-[0_10px_35px_-18px_rgba(15,23,42,0.25)] backdrop-blur-sm;
+  }
+
+  .panel-card-strong {
+    @apply rounded-[calc(var(--radius)*1.25)] border border-border/80 bg-card shadow-[0_18px_48px_-24px_rgba(15,23,42,0.35)];
+  }
+
+  .panel-subtle {
+    @apply rounded-[calc(var(--radius)*1.05)] border border-border/70 bg-muted/30;
+  }
+
+  .page-header {
+    @apply mb-6 flex flex-col gap-2 sm:mb-8;
+  }
+
+  .page-title {
+    @apply text-2xl font-semibold tracking-tight sm:text-3xl;
+  }
+
+  .page-subtitle {
+    @apply max-w-2xl text-sm leading-6 text-muted-foreground sm:text-[15px];
+  }
+
+  .section-heading {
+    @apply text-lg font-semibold tracking-tight text-foreground sm:text-xl;
+  }
+
+  .section-caption {
+    @apply text-sm text-muted-foreground;
+  }
+
+  .empty-state {
+    min-height: 12rem;
+    border-radius: calc(var(--radius) * 1.05);
+    border: 1px solid color-mix(in oklab, var(--border) 70%, transparent);
+    background: color-mix(in oklab, var(--muted) 30%, transparent);
+    padding: 3rem 1.5rem;
+    text-align: center;
+    color: var(--muted-foreground);
+  }
+
+  .filter-pill {
+    @apply rounded-full border border-transparent bg-background/80 px-3 py-1.5 text-xs font-medium text-muted-foreground shadow-sm;
+  }
+
+  .filter-pill-active {
+    @apply border-primary/20 bg-primary text-primary-foreground shadow-[0_8px_20px_-14px_rgba(15,23,42,0.4)];
+  }
+
+  .info-banner {
+    @apply rounded-[calc(var(--radius)*1.05)] border px-4 py-3 text-sm;
+  }
+
+  @media (max-width: 640px) {
+    /* Slightly larger default type and comfortable line height */
+    body {
+      font-size: 15px;
+      line-height: 1.55;
+    }
+
+    /* Better touch ergonomics */
+    button, a, input, textarea, select {
+      touch-action: manipulation;
+    }
+  }
+
+  @media (min-width: 640px) {
+    .page-shell,
+    .page-shell-tight,
+    .page-shell-narrow {
+      padding-top: 2rem;
+      padding-bottom: 2rem;
+    }
+  }
+}

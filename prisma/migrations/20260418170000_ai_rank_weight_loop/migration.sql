@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "AiRankWeightState" ADD COLUMN IF NOT EXISTS "traceCountSinceRecompute" INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE "AiRankWeightState" ADD COLUMN IF NOT EXISTS "lastLearningObjective" DOUBLE PRECISION;
+ALTER TABLE "AiRankWeightState" ADD COLUMN IF NOT EXISTS "lastRecomputedAt" TIMESTAMP(3);

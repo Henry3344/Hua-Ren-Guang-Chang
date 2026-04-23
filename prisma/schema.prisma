@@ -1,0 +1,464 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Category {
+  RENT
+  RENT_SEEK
+  JOB
+  JOB_SEEK
+  SECONDHAND
+}
+
+enum PostStatus {
+  PENDING
+  ACTIVE
+  REJECTED
+  EXPIRED
+  SOLD
+  DELISTED
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  CANCELED
+  EXPIRED
+}
+
+enum CheckoutKind {
+  POST_PIN
+  MERCHANT_APPLY
+  AD_PURCHASE
+  AD_RENEW
+}
+
+model User {
+  id          String   @id @default(cuid())
+  name        String?
+  email       String?  @unique
+  username    String   @unique
+  phone       String?  @unique
+  password    String
+  inviteCode  String   @unique @default(dbgenerated("substring(md5(random()::text), 1, 10)"))
+  invitedById String?
+  invitedBy   User?    @relation("UserInvites", fields: [invitedById], references: [id], onDelete: SetNull)
+  invites     User[]   @relation("UserInvites")
+  inviteRewardGrantedAt DateTime?
+  freePinCredits Int   @default(0)
+  pinTrialUsedAt DateTime?
+  avatar           String?
+  avatarPublicId   String?
+  lastNameChangeAt DateTime?
+  lastAvatarChangeAt DateTime?
+  isAdmin     Boolean  @default(false)
+  creditScore Int      @default(100)
+  level       Int      @default(0)
+  isBanned    Boolean  @default(false)
+  isDeleted   Boolean  @default(false)
+  deletionReason String?
+  deletionDetail String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  posts       Post[]
+  payments    Payment[]
+  favorites   Favorite[]
+  resetTokens PasswordResetToken[]
+  reports     Report[]
+  ads         Ad[]
+  merchant    Merchant?
+  blocksGiven Block[]  @relation("BlocksGiven")
+  blocksReceived Block[] @relation("BlocksReceived")
+  followsGiven   UserFollow[] @relation("FollowsGiven")
+  followsReceived UserFollow[] @relation("FollowsReceived")
+  userReportsMade UserReport[] @relation("UserReportsMade")
+  userReportsReceived UserReport[] @relation("UserReportsReceived")
+  notifications Notification[]
+  feedbacks      Feedback[]
+  aiSearchTraces AiSearchTrace[]
+  aiSearchInteractions AiSearchInteractionEvent[]
+  aiChatFeedbacks AiChatMessageFeedback[]
+}
+
+model Post {
+  id          String     @id @default(cuid())
+  title       String
+  description String
+  price       Float?
+  location    String
+  category    Category
+  status      PostStatus @default(PENDING)
+  images      String[]
+  subCategory String?
+  // Category-specific optional filters
+  rentType    String?
+  jobWorkType String?
+  jobTaxType  String?
+  jobLanguage String?
+  // JOB_SEEK: HOURLY | PER_VISIT (optional salary unit)
+  jobSalaryUnit String?
+  itemCondition String?
+  state       String?
+  contact     String
+  isPinned         Boolean    @default(false)
+  isFlagged        Boolean    @default(false)
+  highRiskKeywords Boolean    @default(false) // 押金/先付等词：须审核；通过后详情仍提示
+  viewCount   Int        @default(0)
+  editCount   Int        @default(0)
+  expiresAt   DateTime?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  userId      String
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  favorites   Favorite[]
+  reports     Report[]
+  ads         Ad[]
+  payments    Payment[]
+  aiSearchInteractions AiSearchInteractionEvent[]
+
+  @@index([category])
+  @@index([status])
+  @@index([isPinned])
+  @@index([createdAt])
+  @@index([rentType])
+  @@index([jobWorkType])
+  @@index([jobTaxType])
+  @@index([jobLanguage])
+  @@index([itemCondition])
+}
+
+model Favorite {
+  id        String   @id @default(cuid())
+  userId    String
+  postId    String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId])
+  @@index([userId])
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@index([token])
+}
+
+model Report {
+  id           String   @id @default(cuid())
+  postId       String
+  post         Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  userId       String?
+  user         User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  reason       String?
+  details      String?
+  contactPhone String?
+  createdAt    DateTime @default(now())
+
+  @@index([postId])
+  @@index([createdAt])
+}
+
+model Ad {
+  id          String   @id @default(cuid())
+  userId      String
+  type        String
+  placement   String
+  targetUrl   String?
+  postId      String?
+  startAt     DateTime
+  endAt       DateTime
+  isActive    Boolean  @default(true)
+  autoRenew   Boolean  @default(false)
+  paymentStatus PaymentStatus @default(COMPLETED)
+  paidAt      DateTime?
+  stripeSessionId String? @unique
+  impressions Int      @default(0)
+  clicks      Int      @default(0)
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post        Post?    @relation(fields: [postId], references: [id], onDelete: SetNull)
+  payments    Payment[]
+
+  @@index([userId])
+  @@index([placement])
+  @@index([isActive, startAt, endAt])
+  @@index([paymentStatus, endAt])
+}
+
+model Merchant {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  companyName   String
+  category      String
+  phone         String
+  email         String
+  address       String
+  licenseImage  String
+  businessScope String
+  status        String   @default("PENDING")
+  paymentStatus PaymentStatus @default(COMPLETED)
+  paidAt        DateTime?
+  submittedAt   DateTime?
+  stripeSessionId String? @unique
+  isPinned      Boolean  @default(false)
+  isDelisted    Boolean  @default(false)
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  payments      Payment[]
+
+  @@index([status])
+  @@index([category])
+  @@index([isPinned])
+  @@index([paymentStatus, status])
+}
+
+model Payment {
+  id                   String        @id @default(cuid())
+  userId               String
+  kind                 CheckoutKind
+  status               PaymentStatus @default(PENDING)
+  amountCents          Int
+  currency             String        @default("usd")
+  description          String?
+  stripeSessionId      String?       @unique
+  stripePaymentIntentId String?
+  stripeCustomerEmail  String?
+  merchantId           String?
+  adId                 String?
+  postId               String?
+  placement            String?
+  startAt              DateTime?
+  endAt                DateTime?
+  fulfilledAt          DateTime?
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
+  user                 User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  merchant             Merchant?     @relation(fields: [merchantId], references: [id], onDelete: SetNull)
+  ad                   Ad?           @relation(fields: [adId], references: [id], onDelete: SetNull)
+  post                 Post?         @relation(fields: [postId], references: [id], onDelete: SetNull)
+
+  @@index([userId, kind, createdAt])
+  @@index([merchantId])
+  @@index([adId])
+  @@index([postId])
+  @@index([status, createdAt])
+}
+
+model UserReport {
+  id             String   @id @default(cuid())
+  reporterId     String
+  reportedUserId String
+  reason         String
+  details        String?
+  contactPhone   String?
+  createdAt      DateTime @default(now())
+
+  reporter       User     @relation("UserReportsMade", fields: [reporterId], references: [id], onDelete: Cascade)
+  reported       User     @relation("UserReportsReceived", fields: [reportedUserId], references: [id], onDelete: Cascade)
+
+  @@index([reportedUserId])
+  @@index([reporterId])
+}
+
+model LocationSuggestion {
+  id        String   @id @default(cuid())
+  stateText String
+  cityText  String
+  createdAt DateTime @default(now())
+}
+
+model Block {
+  id        String   @id @default(cuid())
+  blockerId String
+  blockedId String
+  createdAt DateTime @default(now())
+
+  blocker   User     @relation("BlocksGiven", fields: [blockerId], references: [id], onDelete: Cascade)
+  blocked   User     @relation("BlocksReceived", fields: [blockedId], references: [id], onDelete: Cascade)
+
+  @@unique([blockerId, blockedId])
+  @@index([blockerId])
+}
+
+model UserFollow {
+  id          String   @id @default(cuid())
+  followerId  String
+  followingId String
+  createdAt   DateTime @default(now())
+
+  follower  User @relation("FollowsGiven", fields: [followerId], references: [id], onDelete: Cascade)
+  following User @relation("FollowsReceived", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId])
+  @@index([followerId])
+  @@index([followingId])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String?
+  title     String
+  body      String?
+  kind      String   @default("SYSTEM")
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRead, createdAt])
+}
+
+model Feedback {
+  id        String   @id @default(cuid())
+  userId    String?
+  type      String   @default("FEATURE")
+  message   String
+  contact   String?
+  createdAt DateTime @default(now())
+
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+}
+
+model Announcement {
+  id        String   @id @default(cuid())
+  enabled   Boolean  @default(false)
+  lines     String[]
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+}
+
+// 顶栏右侧曝光轮播（站长后台）
+model RiskExposureItem {
+  id        String   @id @default(cuid())
+  text      String
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@index([sortOrder, createdAt])
+}
+
+// 匿名访客 UTC 整点去重（访问统计）
+model VisitorHourMark {
+  visitorHash String
+  hourSlot    DateTime
+
+  @@id([visitorHash, hourSlot])
+  @@index([hourSlot])
+}
+
+/// AI 助手单次检索会话（用于点击/停留学习与向量存档）
+model AiSearchTrace {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  retrievalQuery  String   @db.Text
+  /// OpenAI embedding 等，JSON number[]
+  queryEmbedding  Json?
+  retrievalW      Float
+  businessW       Float
+  freshnessW      Float
+  /// 本次检索命中的帖子数；即使无结果也保留轻量 trace，便于将消息级反馈接回分析链路
+  resultCount     Int      @default(0)
+  /// 生成本次结果时所使用的在线权重版本号（来自 AiRankWeightState）
+  weightVersion   Int      @default(1)
+  priceIntentHeur Boolean  @default(false)
+  mergeIntentLlmOk Boolean @default(false)
+  semanticPriceHint Boolean @default(false)
+  createdAt       DateTime @default(now())
+
+  events AiSearchInteractionEvent[]
+  chatFeedbacks AiChatMessageFeedback[]
+
+  @@index([userId, createdAt])
+}
+
+/// 曝光 / 点击 / 停留脉冲（append-only，供 Learning-to-Rank 聚合）
+model AiSearchInteractionEvent {
+  id         String   @id @default(cuid())
+  traceId    String
+  trace      AiSearchTrace @relation(fields: [traceId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  postId     String
+  post       Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  position   Int
+  /// impression | click | dwell
+  kind       String
+  dwellMs    Int?
+  /// 同 trace 内第几次从推荐卡片点进详情（含重复点同帖）
+  clickSeq   Int?
+  clientMeta Json?
+  createdAt  DateTime @default(now())
+
+  @@index([traceId, createdAt])
+  @@index([userId, createdAt])
+  @@index([postId])
+}
+
+/// 轻量在线权重状态（可与启发式混合）
+model AiRankWeightState {
+  id              String   @id @default("default")
+  retrievalW      Float    @default(0.30)
+  businessW       Float    @default(0.06)
+  freshnessW      Float    @default(0.16)
+  /// 当前在线权重版本；每次成功重算后自增，便于 trace 回溯
+  weightVersion   Int      @default(1)
+  impressionTotal Int      @default(0)
+  clickTotal      Int      @default(0)
+  /// 助手回复被赞的累计次数（消息级反馈 → 供学习目标 L 中的 approval 分量）
+  likeTotal       Int      @default(0)
+  /// 助手回复被踩的累计次数
+  dislikeTotal    Int      @default(0)
+  /// 自上次权重更新以来新增的 AiSearchTrace 条数（用于每 N 次触发重算）
+  traceCountSinceRecompute Int @default(0)
+  /// 自上次权重更新以来新增的消息级反馈信号数（赞/踩/撤销/切换）
+  feedbackSignalCountSinceRecompute Int @default(0)
+  /// 最近一次聚合得到的学习目标标量 L∈[0,1]（见 aiRankLearningObjective）
+  lastLearningObjective    Float?
+  lastRecomputedAt         DateTime?
+  updatedAt       DateTime @updatedAt
+}
+
+/// 用户对 AI 助手单条回复的赞/踩反馈（消息级），用于离线训练与在线学习信号
+model AiChatMessageFeedback {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  /// 若该回复附带 RAG 结果卡片，则关联 AiSearchTrace；纯文本兜底回复可为空
+  traceId         String?
+  trace           AiSearchTrace? @relation(fields: [traceId], references: [id], onDelete: SetNull)
+  /// 客户端生成的消息 id；与 userId 一起唯一，便于撤销或切换投票
+  clientMessageId String
+  /// 'up' | 'down'
+  rating          String
+  /// 触发该回复的最近一条用户提问（已截断，供离线分析）
+  question        String?  @db.Text
+  /// 助手回复文本（已截断，供离线分析）
+  answer          String?  @db.Text
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([userId, clientMessageId])
+  @@index([traceId])
+  @@index([rating, createdAt])
+  @@index([userId, createdAt])
+}

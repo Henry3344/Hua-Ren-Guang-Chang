@@ -1,0 +1,7 @@
+-- AlterTable
+ALTER TABLE "Report" ADD COLUMN IF NOT EXISTS "reason" TEXT;
+ALTER TABLE "Report" ADD COLUMN IF NOT EXISTS "details" TEXT;
+ALTER TABLE "Report" ADD COLUMN IF NOT EXISTS "contactPhone" TEXT;
+
+-- AlterTable
+ALTER TABLE "UserReport" ADD COLUMN IF NOT EXISTS "contactPhone" TEXT;
