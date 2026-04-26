@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { US_STATE_CODE_TO_ZH, isSupportedStateCode } from '@/lib/locationMeta'
+import { US_STATE_CODE_TO_ZH, isSupportedStateCode, normalizeUsStateCode } from '@/lib/locationMeta'
 import { labelForSelection } from '@/lib/locationMeta'
 import type { LocationPref } from '@/lib/locationTypes'
 
@@ -47,7 +47,7 @@ export async function GET(req: Request) {
     if (data.status !== 'success' || data.countryCode !== 'US') {
       return NextResponse.json({ ok: false, reason: 'not_us_or_fail' })
     }
-    const code = String(data.region || '').toUpperCase()
+    const code = normalizeUsStateCode(String(data.region || ''))
     const cityEn = String(data.city || '')
     if (!isSupportedStateCode(code)) {
       return NextResponse.json({
