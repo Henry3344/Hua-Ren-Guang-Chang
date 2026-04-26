@@ -33,6 +33,24 @@ const requiredByEnv = {
 
 const target = process.argv[2] === 'production' ? 'production' : 'preview'
 const missing = requiredByEnv[target].filter((key) => !process.env[key]?.trim())
+const warnings = []
+
+const databaseUrl = process.env.DATABASE_URL?.trim()
+if (databaseUrl) {
+  try {
+    const parsed = new URL(databaseUrl)
+    const isNeon = parsed.hostname.includes('neon.tech')
+    if (isNeon && parsed.searchParams.get('sslmode') !== 'require') {
+      warnings.push('DATABASE_URL looks like Neon; add ?sslmode=require if it is not already present.')
+    }
+  } catch {
+    warnings.push('DATABASE_URL is present but is not a valid URL.')
+  }
+}
+
+if (!process.env.DIRECT_URL?.trim()) {
+  warnings.push('DIRECT_URL is not set. Runtime is OK, but keep a Neon direct/unpooled URL for local Prisma migrations.')
+}
 
 if (missing.length > 0) {
   console.error(`Missing ${target} env vars:`)
@@ -40,6 +58,10 @@ if (missing.length > 0) {
     console.error(`- ${key}`)
   }
   process.exit(1)
+}
+
+for (const warning of warnings) {
+  console.warn(`Warning: ${warning}`)
 }
 
 console.log(`All ${target} env vars are present.`)
