@@ -5,7 +5,7 @@ import type { NextRequest } from 'next/server'
  * Edge：轻量透传 + 可选地理头（便于后续按地区做实验或 CDN 策略）。
  * 不使用 Prisma / Node-only API。
  */
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const res = NextResponse.next()
   const country = request.headers.get('x-vercel-ip-country')
   if (country) {
