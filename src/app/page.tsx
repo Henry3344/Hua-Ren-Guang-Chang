@@ -13,7 +13,7 @@ import { getRecommendations } from '@/lib/getRecommendations'
 import { buildHomeLatestQuery, buildHomeRecQuery } from '@/lib/homeFeedParams'
 import { stablePostsQueryKey } from '@/lib/buildPostsListParams'
 
-export const revalidate = 60
+export const dynamic = 'force-dynamic'
 
 const cachedHomeLatest = unstable_cache(
   async () => {
