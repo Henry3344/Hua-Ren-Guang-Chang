@@ -229,7 +229,8 @@ export function matchLocationFromGeo(
   if (!parts.length) return { city: '', area: '' }
 
   for (const city of state.cities) {
-    for (const [area, aliases] of Object.entries(city.areaAliases || {})) {
+    const areaAliases = Object.entries(city.areaAliases || {}) as [string, string[]][]
+    for (const [area, aliases] of areaAliases) {
       if (aliases.some((alias) => parts.some((part) => geoTextMatches(part, alias)))) {
         return { city: city.city, area }
       }
