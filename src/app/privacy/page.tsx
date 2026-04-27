@@ -63,6 +63,10 @@ export default function PrivacyPage() {
             您在站内的浏览记录、点击、搜索词、筛选条件、所选地区偏好、帖子浏览次数、停留时间、AI 助手对话记录（用于展示聊天历史、改进检索与回答质量），以及站内通知阅读状态等。
           </p>
           <p>
+            <strong className="text-foreground">（3-1）自动定位信息：</strong>
+            当您主动点击「自动定位」并授权浏览器定位时，我们会临时读取一次您的大概坐标，并通过地图服务反查州、城市 / 都会区与可能的区域，用于为您预选地区、筛选和推荐本地帖子。该定位不用于精确地址展示、跨站追踪或第三方广告定向；您也可以拒绝授权并手动选择地区。
+          </p>
+          <p>
             <strong className="text-foreground">（4）技术与日志信息：</strong>
             IP 地址、用户代理（User-Agent）、设备与浏览器类型、操作系统、语言与时区、访问时间、访问路径（Referrer）、错误日志、性能指标、安全审计日志，以及反滥用 / 验证码服务（如 Cloudflare Turnstile）产生的相关数据。
           </p>
@@ -96,7 +100,7 @@ export default function PrivacyPage() {
           </p>
           <ul className="list-disc pl-5 space-y-2">
             <li>创建与维护您的账号、进行身份验证、管理会话与登录状态；</li>
-            <li>展示、检索、筛选、排序与推荐站内帖子与商家，支持地区、分类、价位、关键词等筛选；</li>
+            <li>展示、检索、筛选、排序与推荐站内帖子与商家，支持地区、分类、价位、关键词等筛选；自动定位结果仅用于预选地区与本地内容推荐；</li>
             <li>
               提供 AI 自然语言助手功能，包括
               <em>意图识别、结构化抽取、多轨检索、相关性打分、结果改写、放宽召回与对话上下文理解</em>
@@ -142,7 +146,7 @@ export default function PrivacyPage() {
             </li>
             <li>
               <strong className="text-foreground">偏好类：</strong>
-              记住您选择的地区偏好、深色 / 浅色模式、语言等展示偏好，以提升体验；
+              记住您选择或自动定位得到的地区偏好、深色 / 浅色模式、语言等展示偏好，以提升体验；
             </li>
             <li>
               <strong className="text-foreground">分析类：</strong>

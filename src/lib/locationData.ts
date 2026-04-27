@@ -21,9 +21,9 @@ const curatedLocationData = [
         areas: ['法拉盛', '贝赛', '艾姆赫斯特'],
         geoAliases: ['Queens', 'Queens County'],
         areaAliases: {
-          法拉盛: ['Flushing'],
-          贝赛: ['Bayside'],
-          艾姆赫斯特: ['Elmhurst'],
+          法拉盛: ['Flushing', '法拉盛'],
+          贝赛: ['Bayside', '贝赛'],
+          艾姆赫斯特: ['Elmhurst', '艾姆赫斯特'],
         },
       },
       {
@@ -231,7 +231,8 @@ export function matchLocationFromGeo(
   for (const city of state.cities) {
     const areaAliases = Object.entries(city.areaAliases || {}) as [string, string[]][]
     for (const [area, aliases] of areaAliases) {
-      if (aliases.some((alias) => parts.some((part) => geoTextMatches(part, alias)))) {
+      const allAliases = [area, ...aliases]
+      if (allAliases.some((alias) => parts.some((part) => geoTextMatches(part, alias)))) {
         return { city: city.city, area }
       }
     }

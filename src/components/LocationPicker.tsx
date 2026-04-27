@@ -2,7 +2,7 @@
 import { useRef, useState } from 'react'
 import { locationData, matchLocationFromGeo } from '@/lib/locationData'
 import { US_STATE_CODE_TO_ZH, normalizeUsStateCode } from '@/lib/locationMeta'
-import { MapPin, Navigation } from 'lucide-react'
+import { CircleHelp, MapPin, Navigation } from 'lucide-react'
 
 interface Props {
   value: { state: string; city: string; area: string }
@@ -15,6 +15,7 @@ export default function LocationPicker({ value, onChange }: Props) {
   const [geoSuccess, setGeoSuccess] = useState(false)
   const [customCity, setCustomCity] = useState('')
   const [customArea, setCustomArea] = useState('')
+  const [geoHelpOpen, setGeoHelpOpen] = useState(false)
   const submittedSuggestionKeys = useRef(new Set<string>())
 
   const selectedState = locationData.find(s => s.state === value.state)
@@ -60,6 +61,11 @@ export default function LocationPicker({ value, onChange }: Props) {
           }
           const stateCode = normalizeUsStateCode(address.state_code || address.state)
           const matched = stateCode ? US_STATE_CODE_TO_ZH[stateCode] : ''
+          const geoCandidates = [
+            data.name,
+            data.display_name,
+            ...Object.values(address),
+          ].map((item) => (typeof item === 'string' ? item : ''))
           const city =
             address.city ||
             address.town ||
@@ -68,17 +74,7 @@ export default function LocationPicker({ value, onChange }: Props) {
             address.county ||
             ''
           if (matched) {
-            const geoMatch = matchLocationFromGeo(matched, [
-              address.neighbourhood,
-              address.suburb,
-              address.quarter,
-              address.city_district,
-              address.borough,
-              address.city,
-              address.town,
-              address.village,
-              address.county,
-            ])
+            const geoMatch = matchLocationFromGeo(matched, geoCandidates)
             onChange({ state: matched, city: geoMatch.city, area: geoMatch.area })
             const label = [stateCode, geoMatch.city || city, geoMatch.area].filter(Boolean).join(' · ')
             setGeoMsg(`已定位到大概区域：${label || matched}。位置不对可手动选择。`)
@@ -126,11 +122,33 @@ export default function LocationPicker({ value, onChange }: Props) {
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2 flex-wrap">
-        <button type="button" onClick={detectLocation} disabled={detecting}
-          className="inline-flex items-center gap-1.5 text-xs text-primary hover:underline disabled:opacity-50">
-          <Navigation className="w-3 h-3" />
-          {detecting ? '定位中...' : '自动定位到我所在的大概区域'}
-        </button>
+        <div className="relative inline-flex items-center gap-1.5">
+          <button type="button" onClick={detectLocation} disabled={detecting}
+            className="inline-flex items-center gap-1.5 text-xs text-primary hover:underline disabled:opacity-50">
+            <Navigation className="w-3 h-3" />
+            {detecting ? '定位中...' : '自动定位'}
+          </button>
+          <button
+            type="button"
+            className="inline-flex h-5 w-5 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            aria-label="查看自动定位说明"
+            aria-expanded={geoHelpOpen}
+            onClick={() => setGeoHelpOpen((open) => !open)}
+          >
+            <CircleHelp className="h-3.5 w-3.5" />
+          </button>
+          {geoHelpOpen && (
+            <div className="absolute left-0 top-full z-20 mt-2 w-[min(20rem,80vw)] rounded-xl border bg-popover p-3 text-left text-xs leading-5 text-popover-foreground shadow-lg">
+              <p className="font-medium text-foreground">自动定位说明</p>
+              <p className="mt-1 text-muted-foreground">
+                点击后，浏览器会先征求您的定位授权；我们只读取一次大概坐标，并通过地图服务反查州、城市/都会区和可能的区域。
+              </p>
+              <p className="mt-1 text-muted-foreground">
+                定位只用于为您预选地区、筛选和推荐本地帖子，不用于精确地址展示、跨站追踪或第三方广告定向。若识别不准，可随时手动修改。
+              </p>
+            </div>
+          )}
+        </div>
         {geoMsg && (
           <span className={'text-xs ' + (geoSuccess ? 'text-muted-foreground' : 'text-yellow-600')}>
             {geoMsg}
