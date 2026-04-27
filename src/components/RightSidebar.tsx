@@ -176,7 +176,7 @@ export default function RightSidebar() {
 
   return (
     <>
-      <div className="fixed right-2 sm:right-3 top-auto bottom-24 sm:top-1/3 sm:bottom-auto z-40 flex flex-col gap-2">
+      <div className="fixed right-2 sm:right-3 top-auto bottom-40 sm:top-1/3 sm:bottom-auto z-40 flex flex-col gap-2">
         <div ref={stackRef} className="flex flex-col gap-2">
           {collapsed ? (
             <div className="relative group">

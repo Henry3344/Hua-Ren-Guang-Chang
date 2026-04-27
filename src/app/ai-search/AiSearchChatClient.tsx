@@ -779,7 +779,7 @@ export default function AiSearchChatClient() {
               )}
             </div>
             </div>
-            <div className="shrink-0 border-t border-border/70 bg-background/90 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur-sm sm:px-5">
+            <div className="shrink-0 border-t border-border/70 bg-background/90 px-4 pb-[max(2.25rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur-sm sm:px-5 sm:pb-[max(0.75rem,env(safe-area-inset-bottom))]">
               <form onSubmit={onSubmit} className="w-full">
                 <div
                   className={

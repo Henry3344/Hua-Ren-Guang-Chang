@@ -25,7 +25,7 @@ export default function AiAssistantFab() {
   }
 
   return (
-    <div className="fixed bottom-[max(1rem,env(safe-area-inset-bottom,0px))] right-3 z-[45] h-[3.75rem] w-[3.75rem] sm:right-4">
+    <div className="fixed bottom-[max(5rem,env(safe-area-inset-bottom,0px))] right-3 z-[45] h-[3.75rem] w-[3.75rem] sm:right-4 sm:bottom-8">
       {/* 旋转的圆锥彩虹环（与首页 AI 帮我找 一致） */}
       <div className="absolute inset-0 overflow-hidden rounded-full">
         <div

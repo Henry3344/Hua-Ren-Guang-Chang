@@ -107,11 +107,11 @@ export default async function HomePage() {
               <div className="mb-4">
                 <HomeSearchBar />
               </div>
-              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 justify-center items-stretch sm:items-center w-full max-w-md sm:max-w-none mx-auto">
-                <Button asChild size="lg" className="w-full sm:w-auto">
+              <div className="flex flex-row gap-2 sm:gap-3 justify-center items-stretch sm:items-center w-full max-w-[17.5rem] sm:max-w-none mx-auto">
+                <Button asChild size="lg" className="min-w-0 flex-1 px-3 sm:w-auto sm:flex-none sm:px-8">
                   <Link href="/posts/new"><PlusCircle className="w-4 h-4 mr-2" />免费发布</Link>
                 </Button>
-                <Button asChild variant="outline" size="lg" className="w-full sm:w-auto bg-background/80 backdrop-blur-sm">
+                <Button asChild variant="outline" size="lg" className="min-w-0 flex-1 px-3 sm:w-auto sm:flex-none sm:px-8 bg-background/80 backdrop-blur-sm">
                   <Link href="/posts">浏览全部</Link>
                 </Button>
               </div>

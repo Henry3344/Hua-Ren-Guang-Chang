@@ -156,7 +156,7 @@ function DashboardContent() {
             const st = statusConfig[post.status] || statusConfig.ACTIVE
             return (
               <div key={post.id} className="panel-card p-4">
-                <div className="flex items-start gap-4">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-4">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1 flex-wrap">
                       <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-muted">{categoryMap[post.category]}</span>
@@ -169,9 +169,9 @@ function DashboardContent() {
                       )}
                     </div>
                     <Link href={'/posts/' + post.id} className="font-medium text-sm hover:text-primary line-clamp-1">{post.title}</Link>
-                    <div className="text-xs text-muted-foreground mt-1 flex items-center gap-2">
-                      <Eye className="w-3 h-3" />{post.viewCount} 浏览
-                      <span>·</span>{post.location}
+                    <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
+                      <span className="inline-flex items-center gap-1"><Eye className="w-3 h-3" />{post.viewCount} 浏览</span>
+                      <span>·</span><span className="min-w-0 break-words">{post.location}</span>
                       {post.price != null && (
                         <>
                           <span>·</span>${post.price}{post.category === 'JOB' ? '/hr' : ''}
@@ -185,7 +185,7 @@ function DashboardContent() {
                       <p className="text-xs text-amber-800 mt-1">该帖已被管理员下架，前台用户不可见。如有异议请联系平台。</p>
                     )}
                   </div>
-                  <div className="flex items-center gap-1 shrink-0 flex-wrap justify-end">
+                  <div className="grid grid-cols-2 gap-2 sm:flex sm:shrink-0 sm:flex-wrap sm:items-center sm:justify-end sm:gap-1">
                     {post.status === 'ACTIVE' && (
                       <>
                         {!post.isPinned && (
@@ -209,13 +209,13 @@ function DashboardContent() {
                       </>
                     )}
                     {post.status !== 'SOLD' && post.status !== 'EXPIRED' && post.status !== 'DELISTED' && (
-                      <Button variant="ghost" size="icon" asChild title="编辑">
+                      <Button variant="ghost" size="icon" asChild title="编辑" className="justify-self-center">
                         <Link href={'/posts/' + post.id + '/edit'}>
                           <Pencil className="w-4 h-4" />
                         </Link>
                       </Button>
                     )}
-                    <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive"
+                    <Button variant="ghost" size="icon" className="justify-self-center text-destructive hover:text-destructive"
                       onClick={() => handleDelete(post.id)}>
                       <Trash2 className="w-4 h-4" />
                     </Button>

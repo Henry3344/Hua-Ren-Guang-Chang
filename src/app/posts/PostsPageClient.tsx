@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useState, Suspense, type ReactElement } from 'react'
+import { useEffect, useRef, useState, Suspense, type ReactElement } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import PostCard from '@/components/PostCard'
 import PostsViewModeToggle from '@/components/PostsViewModeToggle'
@@ -186,6 +186,7 @@ function PostsContent({
   const [q, setQ] = useState(searchParams.get('q') || '')
   const [suggestOpen, setSuggestOpen] = useState(false)
   const [suggest, setSuggest] = useState<Array<{ id: string; title: string }>>([])
+  const resultsTopRef = useRef<HTMLDivElement | null>(null)
 
   const category = searchParams.get('category') || ''
   const sub = searchParams.get('sub') || ''
@@ -315,6 +316,9 @@ function PostsContent({
     const params = new URLSearchParams(searchParams.toString())
     params.set('page', String(clamped))
     router.push('/posts?' + params.toString())
+    window.setTimeout(() => {
+      resultsTopRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }, 80)
   }
 
   function handleJumpPage(e: React.FormEvent) {
@@ -434,8 +438,8 @@ function PostsContent({
           </div>
           <div className="hidden shrink-0 text-sm text-muted-foreground sm:block">共 {total} 条结果</div>
         </div>
-      <div className="flex items-center gap-3 mb-4">
-        <div className="flex flex-nowrap items-center gap-2 sm:gap-3 overflow-x-auto pb-1 min-w-0 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div className="flex w-full flex-nowrap items-center gap-2 overflow-x-auto pb-1 sm:min-w-0 sm:flex-1 sm:gap-3 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {categories
             .filter((c) => c.value === '' || c.value === 'SECONDHAND')
             .map((cat) => (
@@ -469,7 +473,7 @@ function PostsContent({
           />
         </div>
 
-        <form onSubmit={handleSearch} className="flex gap-2 shrink-0 w-[220px] sm:w-[360px]">
+        <form onSubmit={handleSearch} className="flex w-full gap-2 sm:w-[360px] sm:shrink-0">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <input
@@ -496,7 +500,7 @@ function PostsContent({
               </div>
             )}
           </div>
-          <Button type="submit" size="lg" className="shrink-0">
+          <Button type="submit" size="lg" className="h-11 shrink-0 px-5 sm:px-6">
             搜索
           </Button>
         </form>
@@ -653,7 +657,7 @@ function PostsContent({
         )}
       </div>
 
-      <div className="mb-4 flex flex-wrap items-center gap-3">
+      <div ref={resultsTopRef} className="mb-4 flex scroll-mt-24 flex-wrap items-center gap-3">
         <div className="shrink-0 text-sm text-muted-foreground sm:hidden">共 {total} 条结果</div>
         <PostsViewModeToggle mode={viewMode} onChange={setViewMode} />
       </div>
