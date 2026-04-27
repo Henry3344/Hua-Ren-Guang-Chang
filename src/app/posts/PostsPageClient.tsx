@@ -687,7 +687,13 @@ function PostsContent({
           </div>
         )
       ) : posts.length === 0 ? (
-        <div className="empty-state">暂无帖子</div>
+        <div className="rounded-2xl border border-dashed bg-card px-6 py-14 text-center">
+          <p className="text-sm font-medium text-foreground">当前没有帖子可供展示</p>
+          <p className="mt-2 mb-5 text-xs text-muted-foreground">可以切换地区、调整筛选，或发布第一条信息。</p>
+          <Button asChild>
+            <Link href="/posts/new">立即发布</Link>
+          </Button>
+        </div>
       ) : viewMode === 'list' ? (
         <div className="flex flex-col gap-3">{feedItems}</div>
       ) : (
