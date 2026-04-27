@@ -100,8 +100,9 @@ export default function HomeLatestPosts({
 
   if (posts.length === 0) {
     return (
-      <div className="text-center py-16 text-muted-foreground">
-        <p className="mb-4">当前地区暂无帖子，来发第一条吧</p>
+      <div className="rounded-2xl border border-dashed bg-card px-6 py-14 text-center">
+        <p className="text-sm font-medium text-foreground">当前没有帖子可供展示</p>
+        <p className="mt-2 mb-5 text-xs text-muted-foreground">可以切换地区、浏览全部，或发布第一条信息。</p>
         <Button asChild>
           <Link href="/posts/new">立即发布</Link>
         </Button>

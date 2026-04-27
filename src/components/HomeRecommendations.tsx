@@ -159,7 +159,25 @@ export default function HomeRecommendations({
     )
   }
 
-  if (items.length === 0) return null
+  if (items.length === 0) {
+    return (
+      <div className="w-full min-w-0 flex flex-col h-full">
+        <div className="flex items-center justify-between mb-3 gap-2 shrink-0">
+          <div className="text-lg font-semibold">猜你喜欢</div>
+          <Link href="/posts" className="text-xs text-muted-foreground hover:text-foreground">
+            浏览更多
+          </Link>
+        </div>
+
+        <div className="relative flex min-h-[320px] flex-1 items-center justify-center rounded-2xl border border-dashed bg-card px-6 py-12 text-center">
+          <div>
+            <p className="text-sm font-medium text-foreground">当前没有帖子可供展示</p>
+            <p className="mt-2 text-xs text-muted-foreground">可以切换地区、浏览全部，或发布第一条信息。</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="w-full min-w-0 flex flex-col h-full">
